@@ -8,13 +8,9 @@
 
 This package adds an Artisan command to check for invalid configuration file references in your application code and Blade views.
 
-## Support us
+## Support me
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-config-checker.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-config-checker)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+**Feel like shouting out a thank you?** [Buy me a coffee! ☕️](https://buymeacoffee.com/chrisdicarlo)
 
 ## Installation
 
