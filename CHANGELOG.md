@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-config-checker` will be documented in this file.
 
+## v1.0.1 - Fix return value - 2024-09-19
+
+Command now returns a failure if any undefined configuration keys are found.
+
+**Full Changelog**: https://github.com/chrisdicarlo/laravel-config-checker/compare/v1.0.0...v1.0.1
+
 ## Initial release - 2024-09-19
 
 Initial release.
