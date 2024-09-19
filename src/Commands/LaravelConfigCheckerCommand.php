@@ -2,8 +2,12 @@
 
 namespace ChrisDiCarlo\LaravelConfigChecker\Commands;
 
+use ChrisDiCarlo\LaravelConfigChecker\Support\BladeFiles;
+use ChrisDiCarlo\LaravelConfigChecker\Support\FileChecker;
+use ChrisDiCarlo\LaravelConfigChecker\Support\LoadConfigKeys;
+use ChrisDiCarlo\LaravelConfigChecker\Support\PhpFiles;
 use Illuminate\Console\Command;
-use Symfony\Component\Finder\Finder;
+use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
@@ -16,192 +20,95 @@ class LaravelConfigCheckerCommand extends Command
 
     public $description = 'Check all references to config values in PHP and Blade files';
 
-    private $configKeys = [];
+    private Collection $configKeys;
 
-    private array $issues = [];
+    private array $bladeIssues = [];
 
-    public function handle(): int
+    private array $phpIssues = [];
+
+    public function getIssues(): Collection
     {
-        $this->loadConfigKeys();
+        $combinedIssues = collect([...$this->phpIssues, ...$this->bladeIssues])
+            ->filter(fn ($issue) => ! empty($issue));
 
-        if ($this->output->isVerbose()) {
-            $this->outputConfigKeys();
+        return $combinedIssues;
+    }
+
+    public function handle(
+        LoadConfigKeys $loadConfigKeys,
+        PhpFiles $phpFiles,
+        BladeFiles $bladeFiles
+    ): int {
+        $this->configKeys = $loadConfigKeys();
+
+        $progress = progress(
+            label: 'Checking PHP files...',
+            steps: $phpFiles(),
+            callback: function ($file, $progress) {
+                $progress->hint = "Checking {$file->getRelativePathname()}";
+
+                $content = file_get_contents($file->getRealPath());
+
+                $fileChecker = new FileChecker($this->configKeys, $content);
+
+                foreach ($fileChecker->check() as $issue) {
+                    $this->phpIssues[$file->getRelativePathname()][] = $issue;
+                }
+            }
+        );
+
+        $progress = progress(
+            label: 'Checking Blade files...',
+            steps: $bladeFiles(),
+            callback: function ($file, $progress) {
+                $progress->hint = "Checking {$file->getRelativePathname()}";
+
+                $content = file_get_contents($file->getRealPath());
+                $fileChecker = new FileChecker($this->configKeys, $content);
+
+                foreach ($fileChecker->check() as $issue) {
+                    $this->bladeIssues[$file->getRelativePathname()][] = $issue;
+                }
+            }
+        );
+
+        if ($this->getIssues()->isEmpty()) {
+            info('No issues found. All config references are valid.');
+
+            return self::SUCCESS;
         }
-
-        $this->checkPhpFiles();
-        $this->checkBladeFiles();
 
         $this->displayResults();
 
         return self::SUCCESS;
     }
 
-    private function outputConfigKeys(): void
-    {
-        table(
-            ['File', '# of Keys'],
-            collect($this->configKeys)->groupBy(fn ($key) => explode('.', $key)[0])
-                ->map(fn ($subkeys, $key) => ['key' => $key, 'count' => $subkeys->count()])
-                ->sort()
-                ->values()
-                ->toArray()
-        );
-    }
-
-    private function flattenConfig($config, $prefix = '')
-    {
-        foreach ($config as $key => $value) {
-            $fullKey = $prefix ? "{$prefix}.{$key}" : $key;
-
-            $this->configKeys[] = $fullKey;
-
-            if (is_array($value)) {
-                $this->flattenConfig($value, $fullKey);
-            }
-        }
-    }
-
-    private function loadConfigKeys()
-    {
-        $configPath = $this->laravel->configPath();
-        $finder = new Finder;
-        $finder->files()->in($configPath)->name('*.php');
-
-        foreach ($finder as $file) {
-            $this->configKeys[] = basename($file->getFilename(), '.php');
-
-            $config = include $file->getRealPath();
-
-            $this->flattenConfig($config, basename($file->getFilename(), '.php'));
-        }
-    }
-
     private function displayResults(): void
     {
-        $issues = collect($this->issues)->filter(fn ($issue) => ! empty($issue));
+        error('Invalid config references found:');
 
-        if ($issues->isEmpty()) {
-            info('No issues found. All config references are valid.');
-
-            return;
-        }
-
-        error('Issues found! Invalid config references detected:');
+        $rowData = $this->formatIssuesOutput();
 
         table(
-            ['File', 'Line Number', 'Key', 'Reference Type'],
-            $issues->sort()->map(function ($issues, $file) {
-                return collect($issues)->map(function ($issue) use ($file) {
-                    return [
-                        'file' => $file,
-                        'line' => $issue['line'],
-                        'key' => $issue['key'],
-                        'type' => $issue['type'],
-                    ];
-                });
-            })->flatten(1)->toArray()
+            ['File', 'Line Number', 'Key Referenced', 'Reference Type'],
+            $rowData,
         );
     }
 
-    private function checkPhpFiles(): void
+    private function formatIssuesOutput(): array
     {
-        $finder = new Finder;
-        $finder->files()->in($this->laravel->basePath())
-            ->name('*.php')
-            ->path('app')
-            ->path('database')
-            ->path('routes')
-            ->path('bootstrap')
-            ->notPath('vendor');
-
-        $progress = progress(
-            label: 'Checking PHP files...',
-            steps: $finder,
-            callback: function ($file, $progress) {
-                $progress->hint = "Checking {$file->getRelativePathname()}";
-
-                $this->issues[$file->getRelativePathname()] = array_merge(
-                    $this->issues[$file->getRelativePathname()] ?? [],
-                    $this->checkForFacadeUsage($file),
-                    $this->checkForHelperUsage($file)
-                );
-            }
-        );
-    }
-
-    private function checkBladeFiles(): void
-    {
-        $finder = new Finder;
-        $finder->files()->in($this->laravel->basePath())
-            ->name('*.blade.php')
-            ->notPath('vendor');
-
-        $progress = progress(
-            label: 'Checking Blade files...',
-            steps: $finder,
-            callback: function ($file, $progress) {
-                $progress->hint = "Checking {$file->getRelativePathname()}";
-
-                $this->issues[$file->getRelativePathname()] = array_merge(
-                    $this->issues[$file->getRelativePathname()] ?? [],
-                    $this->checkForFacadeUsage($file),
-                    $this->checkForHelperUsage($file)
-                );
-            }
-        );
-    }
-
-    private function checkForFacadeUsage($file): array
-    {
-        $content = file_get_contents($file->getRealPath());
-        $matches = [];
-
-        preg_match_all('/Config::(get|has)\([\'"]([^\'"]+)[\'"]\)/', $content, $matches, PREG_OFFSET_CAPTURE);
-
-        $issues = [];
-
-        foreach ($matches[2] as $index => $match) {
-            $key = $match[0];
-            $offset = (int) $match[1];
-            $lineNumber = substr_count(substr($content, 0, $offset), "\n") + 1;
-
-            if (! in_array($key, $this->configKeys)) {
-                $issues[] = [
-                    'file' => $file->getRelativePathname(),
-                    'key' => $key,
-                    'type' => sprintf('Config::%s()', $matches[1][$index][0]),
-                    'line' => $lineNumber,
-                ];
-            }
-        }
-
-        return $issues;
-    }
-
-    private function checkForHelperUsage($file): array
-    {
-        $content = file_get_contents($file->getRealPath());
-        $matches = [];
-
-        preg_match_all('/config\([\'"]([^\'"]+)[\'"]\)/', $content, $matches, PREG_OFFSET_CAPTURE);
-
-        $issues = [];
-
-        foreach ($matches[1] as $match) {
-            $key = $match[0];
-            $offset = (int) $match[1];
-            $lineNumber = substr_count(substr($content, 0, $offset), "\n") + 1;
-
-            if (! in_array($key, $this->configKeys)) {
-                $issues[] = [
-                    'file' => $file->getRelativePathname(),
-                    'key' => $key,
-                    'type' => 'config()',
-                    'line' => $lineNumber,
-                ];
-            }
-        }
-
-        return $issues;
+        return $this->getIssues()->sort()
+            ->flatMap(function ($issues, $file) {
+                return collect($issues)
+                    ->sortBy('line')
+                    ->map(fn ($issue) => [
+                        $file,
+                        $issue->line,
+                        $issue->key,
+                        $issue->type,
+                    ]);
+            })
+            // ->flatten(1)
+            ->toArray();
     }
 }

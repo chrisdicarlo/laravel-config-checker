@@ -1,10 +1,8 @@
 <?php
 
 return [
-    'valid_key' => 'Testing',
-    'env' => 'testing',
-
+    'valid_key' => 'Laravel Config Checker',
     'nested' => [
-        'valid_nested_key' => 'Nested Testing',
+        'key' => 'value',
     ],
 ];
