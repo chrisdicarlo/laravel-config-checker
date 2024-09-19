@@ -1,11 +1,12 @@
-# Package to check that configuration key references actually exist in your config files.
+# Check for undefined configuration key references in your Laravel project.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/chrisdicarlo/laravel-config-checker.svg?style=flat-square)](https://packagist.org/packages/chrisdicarlo/laravel-config-checker)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/chrisdicarlo/laravel-config-checker/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/chrisdicarlo/laravel-config-checker/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Tests (8.2 / 8.3) Action Status](https://img.shields.io/github/actions/workflow/status/chrisdicarlo/laravel-config-checker/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/chrisdicarlo/laravel-config-checker/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Tests (8.1) Action Status](https://img.shields.io/github/actions/workflow/status/chrisdicarlo/laravel-config-checker/run-php-8.1-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/chrisdicarlo/laravel-config-checker/actions?query=workflow%3Arun-php-8.1-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/chrisdicarlo/laravel-config-checker/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/chrisdicarlo/laravel-config-checker/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/chrisdicarlo/laravel-config-checker.svg?style=flat-square)](https://packagist.org/packages/chrisdicarlo/laravel-config-checker)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+This package adds an Artisan command to check for invalid configuration file references in your application code and Blade views.
 
 ## Support us
 
@@ -23,38 +24,16 @@ You can install the package via composer:
 composer require chrisdicarlo/laravel-config-checker
 ```
 
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag="laravel-config-checker-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="laravel-config-checker-config"
-```
-
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="laravel-config-checker-views"
-```
 
 ## Usage
-
-```php
-$laravelConfigChecker = new Chris Di Carlo\LaravelConfigChecker();
-echo $laravelConfigChecker->echoPhrase('Hello, Chris Di Carlo!');
+From the command-line, simply run:
+```bash
+php artisan config:check
 ```
+
+The command will scan your Php code under `app` and your Blade views under `resources/views`.  Any errors will be displayed in a table information on the location and missing reference:
+
+![Sample Output](output-sample.png)
 
 ## Testing
 
