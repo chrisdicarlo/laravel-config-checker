@@ -80,7 +80,7 @@ class LaravelConfigCheckerCommand extends Command
 
         $this->displayResults();
 
-        return self::SUCCESS;
+        return self::FAILURE;
     }
 
     private function displayResults(): void

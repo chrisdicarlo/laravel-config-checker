@@ -21,5 +21,5 @@ it('displays a message when there are issues', function () {
         ->expectsOutputToContain('app'.DIRECTORY_SEPARATOR.'TestClassTwo.php')
         ->expectsOutputToContain('resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'test-view-one.blade.php')
         ->expectsOutputToContain('resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'test-view-two.blade.php')
-        ->assertExitCode(0);
+        ->assertExitCode(1);
 });
