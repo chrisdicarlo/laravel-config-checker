@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-config-checker` will be documented in this file.
 
+## v1.0.2 - 2024-09-27
+
+Fixes incorrect package name configuration in non-console contexts.
+
 ## v1.0.1 - Fix return value - 2024-09-19
 
 Command now returns a failure if any undefined configuration keys are found.
