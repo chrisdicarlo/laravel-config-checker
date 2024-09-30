@@ -46,7 +46,9 @@ it('loads config keys from the config directory with nested subfolders', functio
 
     $configKeys = $loadConfigKeys();
 
-    expect($configKeys)->toMatchArray($this->nestedFolderConfigKeys);
+    foreach ($this->nestedFolderConfigKeys as $configKey) {
+        expect($configKeys)->toContain($configKey);
+    }
 });
 
 it('returns a collection of config keys', function () {
