@@ -48,11 +48,21 @@ class LoadConfigKeys
         $finder->files()->in($configPath)->name('*.php');
 
         foreach ($finder as $file) {
-            $this->configKeys[] = basename($file->getFilename(), '.php');
+            $relativePath = $file->getRelativePathname();
 
             $config = include $file->getRealPath();
 
-            $this->flattenConfig($config, basename($file->getFilename(), '.php'));
+            $key = pathinfo($relativePath, PATHINFO_FILENAME);
+
+            $folder = pathinfo($relativePath, PATHINFO_DIRNAME);
+
+            if ($folder !== '.') {
+                $key = str_replace('/', '.', $folder).'.'.$key;
+            }
+
+            $this->configKeys[] = $key;
+            $config = include $file->getRealPath();
+            $this->flattenConfig($config, $key);
         }
     }
 }
