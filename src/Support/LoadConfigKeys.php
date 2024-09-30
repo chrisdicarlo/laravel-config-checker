@@ -28,7 +28,7 @@ class LoadConfigKeys
         return collect($this->configKeys);
     }
 
-    private function flattenConfig($config, $prefix = '')
+    private function flattenConfig(array $config, string $prefix = '')
     {
         foreach ($config as $key => $value) {
             $fullKey = $prefix ? "{$prefix}.{$key}" : $key;
