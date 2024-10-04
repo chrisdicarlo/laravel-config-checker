@@ -31,7 +31,7 @@ class FileChecker
         return collect($issues);
     }
 
-    private function checkForFacadeUsage($content): array
+    private function checkForFacadeUsage(string $content): array
     {
         $matches = [];
 
@@ -56,7 +56,7 @@ class FileChecker
         return $issues;
     }
 
-    private function checkForHelperUsage($content): array
+    private function checkForHelperUsage(string $content): array
     {
         $matches = [];
 
