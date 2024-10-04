@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-config-checker` will be documented in this file.
 
+## v1.1.0 - 2024-10-04
+
+Ensure config settings in nested config folders are correctly resolved.
+
 ## v1.0.2 - 2024-09-27
 
 Fixes incorrect package name configuration in non-console contexts.
