@@ -23,3 +23,14 @@ it('displays a message when there are issues', function () {
         ->expectsOutputToContain('resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'test-view-two.blade.php')
         ->assertExitCode(1);
 });
+
+it('disables the progress bar when the --no-progress option is used', function () {
+    $this->app->setBasePath(realpath(__DIR__.'/fixtures/valid'));
+
+    artisan('config:check', ['--no-progress' => true])
+        ->expectsOutputToContain('--no-progress option used. Disabling progress bar.')
+        ->expectsOutputToContain('Checking PHP files...')
+        ->expectsOutputToContain('Checking Blade files...')
+        ->expectsOutputToContain('No issues found. All config references are valid.')
+        ->assertExitCode(0);
+});
