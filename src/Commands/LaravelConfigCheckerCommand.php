@@ -11,12 +11,13 @@ use Illuminate\Support\Collection;
 
 use function Laravel\Prompts\error;
 use function Laravel\Prompts\info;
+use function Laravel\Prompts\intro;
 use function Laravel\Prompts\progress;
 use function Laravel\Prompts\table;
 
 class LaravelConfigCheckerCommand extends Command
 {
-    public $signature = 'config:check';
+    public $signature = 'config:check {--no-progress : Disable progress bar}';
 
     public $description = 'Check all references to config values in PHP and Blade files';
 
@@ -41,12 +42,12 @@ class LaravelConfigCheckerCommand extends Command
     ): int {
         $this->configKeys = $loadConfigKeys();
 
-        $progress = progress(
-            label: 'Checking PHP files...',
-            steps: $phpFiles(),
-            callback: function ($file, $progress) {
-                $progress->hint = "Checking {$file->getRelativePathname()}";
+        if ($this->option('no-progress')) {
+            intro('--no-progress option used. Disabling progress bar.');
+            info('Checking PHP files...');
+            $phpFiles = $phpFiles();
 
+            foreach ($phpFiles as $file) {
                 $content = file_get_contents($file->getRealPath());
 
                 $fileChecker = new FileChecker($this->configKeys, $content);
@@ -55,14 +56,10 @@ class LaravelConfigCheckerCommand extends Command
                     $this->phpIssues[$file->getRelativePathname()][] = $issue;
                 }
             }
-        );
 
-        $progress = progress(
-            label: 'Checking Blade files...',
-            steps: $bladeFiles(),
-            callback: function ($file, $progress) {
-                $progress->hint = "Checking {$file->getRelativePathname()}";
-
+            info('Checking Blade files...');
+            $bladeFiles = $bladeFiles();
+            foreach ($bladeFiles as $file) {
                 $content = file_get_contents($file->getRealPath());
                 $fileChecker = new FileChecker($this->configKeys, $content);
 
@@ -70,7 +67,38 @@ class LaravelConfigCheckerCommand extends Command
                     $this->bladeIssues[$file->getRelativePathname()][] = $issue;
                 }
             }
-        );
+        } else {
+            $progress = progress(
+                label: 'Checking PHP files...',
+                steps: $phpFiles(),
+                callback: function ($file, $progress) {
+                    $progress->hint = "Checking {$file->getRelativePathname()}";
+
+                    $content = file_get_contents($file->getRealPath());
+
+                    $fileChecker = new FileChecker($this->configKeys, $content);
+
+                    foreach ($fileChecker->check() as $issue) {
+                        $this->phpIssues[$file->getRelativePathname()][] = $issue;
+                    }
+                }
+            );
+
+            $progress = progress(
+                label: 'Checking Blade files...',
+                steps: $bladeFiles(),
+                callback: function ($file, $progress) {
+                    $progress->hint = "Checking {$file->getRelativePathname()}";
+
+                    $content = file_get_contents($file->getRealPath());
+                    $fileChecker = new FileChecker($this->configKeys, $content);
+
+                    foreach ($fileChecker->check() as $issue) {
+                        $this->bladeIssues[$file->getRelativePathname()][] = $issue;
+                    }
+                }
+            );
+        }
 
         if ($this->getIssues()->isEmpty()) {
             info('No issues found. All config references are valid.');
