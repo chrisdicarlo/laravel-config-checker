@@ -17,7 +17,10 @@ use function Laravel\Prompts\table;
 
 class LaravelConfigCheckerCommand extends Command
 {
-    public $signature = 'config:check {--no-progress : Disable progress bar}';
+    public $signature = 'config:check
+                            {--no-progress : Disable progress bars}
+                            {--no-blade    : Do not check Blade files}
+                            {--no-php      : Do not check PHP files}';
 
     public $description = 'Check all references to config values in PHP and Blade files';
 
@@ -45,38 +48,11 @@ class LaravelConfigCheckerCommand extends Command
         if ($this->option('no-progress')) {
             intro('--no-progress option used. Disabling progress bar.');
 
-            info('Checking PHP files...');
-            $phpFiles = $phpFiles->resolve();
+            if (! $this->option('no-php')) {
+                info('Checking PHP files...');
+                $phpFiles = $phpFiles->resolve();
 
-            foreach ($phpFiles as $file) {
-                $content = file_get_contents($file->getRealPath());
-
-                $fileChecker = new FileChecker($this->configKeys, $content);
-
-                foreach ($fileChecker->check() as $issue) {
-                    $this->phpIssues[$file->getRelativePathname()][] = $issue;
-                }
-            }
-
-            info('Checking Blade files...');
-            $bladeFiles = $bladeFiles->resolve();
-            foreach ($bladeFiles as $file) {
-                $content = file_get_contents($file->getRealPath());
-                $fileChecker = new FileChecker($this->configKeys, $content);
-
-                foreach ($fileChecker->check() as $issue) {
-                    $this->bladeIssues[$file->getRelativePathname()][] = $issue;
-                }
-            }
-
-        } else {
-
-            $progress = progress(
-                label: 'Checking PHP files...',
-                steps: $phpFiles->resolve(),
-                callback: function ($file, $progress) {
-                    $progress->hint = "Checking {$file->getRelativePathname()}";
-
+                foreach ($phpFiles as $file) {
                     $content = file_get_contents($file->getRealPath());
 
                     $fileChecker = new FileChecker($this->configKeys, $content);
@@ -85,14 +61,12 @@ class LaravelConfigCheckerCommand extends Command
                         $this->phpIssues[$file->getRelativePathname()][] = $issue;
                     }
                 }
-            );
+            }
 
-            $progress = progress(
-                label: 'Checking Blade files...',
-                steps: $bladeFiles->resolve(),
-                callback: function ($file, $progress) {
-                    $progress->hint = "Checking {$file->getRelativePathname()}";
-
+            if (! $this->option('no-blade')) {
+                info('Checking Blade files...');
+                $bladeFiles = $bladeFiles->resolve();
+                foreach ($bladeFiles as $file) {
                     $content = file_get_contents($file->getRealPath());
                     $fileChecker = new FileChecker($this->configKeys, $content);
 
@@ -100,7 +74,42 @@ class LaravelConfigCheckerCommand extends Command
                         $this->bladeIssues[$file->getRelativePathname()][] = $issue;
                     }
                 }
-            );
+            }
+        } else {
+            if (! $this->option('no-php')) {
+                $progress = progress(
+                    label: 'Checking PHP files...',
+                    steps: $phpFiles->resolve(),
+                    callback: function ($file, $progress) {
+                        $progress->hint = "Checking {$file->getRelativePathname()}";
+
+                        $content = file_get_contents($file->getRealPath());
+
+                        $fileChecker = new FileChecker($this->configKeys, $content);
+
+                        foreach ($fileChecker->check() as $issue) {
+                            $this->phpIssues[$file->getRelativePathname()][] = $issue;
+                        }
+                    }
+                );
+            }
+
+            if (! $this->option('no-blade')) {
+                $progress = progress(
+                    label: 'Checking Blade files...',
+                    steps: $bladeFiles->resolve(),
+                    callback: function ($file, $progress) {
+                        $progress->hint = "Checking {$file->getRelativePathname()}";
+
+                        $content = file_get_contents($file->getRealPath());
+                        $fileChecker = new FileChecker($this->configKeys, $content);
+
+                        foreach ($fileChecker->check() as $issue) {
+                            $this->bladeIssues[$file->getRelativePathname()][] = $issue;
+                        }
+                    }
+                );
+            }
         }
 
         if ($this->getIssues()->isEmpty()) {
