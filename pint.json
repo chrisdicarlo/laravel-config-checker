@@ -1,0 +1,79 @@
+{
+    "preset": "laravel",
+    "exclude": ["tests/Fixtures", "bootstrap", "config"],
+    "rules": {
+        "align_multiline_comment": true,
+        "array_indentation": true,
+        "array_push": true,
+        "array_syntax": {
+            "syntax": "short"
+        },
+        "assign_null_coalescing_to_coalesce_equal": true,
+        "blank_line_after_namespace": true,
+        "blank_line_after_opening_tag": true,
+        "braces_position": {
+            "anonymous_classes_opening_brace": "same_line"
+        },
+        "combine_consecutive_issets": true,
+        "combine_consecutive_unsets": true,
+        "concat_space": {
+            "spacing": "one"
+        },
+        "class_attributes_separation": {
+            "elements": {
+                "method": "one"
+            }
+        },
+        "declare_parentheses": true,
+        "declare_strict_types": true,
+        "explicit_string_variable": true,
+        "fully_qualified_strict_types": {
+            "leading_backslash_in_global_namespace": false,
+            "import_symbols": true
+        },
+        "global_namespace_import": {
+            "import_classes": true,
+            "import_constants": true,
+            "import_functions": true
+        },
+        "lambda_not_used_import": true,
+        "method_chaining_indentation": true,
+        "no_empty_comment": true,
+        "no_spaces_inside_parenthesis": true,
+        "no_superfluous_elseif": true,
+        "no_useless_else": true,
+        "not_operator_with_successor_space": true,
+        "ordered_traits": true,
+        "php_unit_test_annotation": {
+            "style": "annotation"
+        },
+        "simple_to_complex_string_variable": true,
+        "simplified_if_return": true,
+        "ordered_class_elements": {
+            "order": [
+                "use_trait",
+                "case",
+                "constant",
+                "constant_public",
+                "constant_protected",
+                "constant_private",
+                "property_public",
+                "property_protected",
+                "property_private",
+                "construct",
+                "destruct",
+                "magic",
+                "phpunit",
+                "method_abstract",
+                "method_public_static",
+                "method_public",
+                "method_protected_static",
+                "method_protected",
+                "method_private_static",
+                "method_private"
+            ],
+            "sort_algorithm": "none"
+        }
+    }
+}
+
