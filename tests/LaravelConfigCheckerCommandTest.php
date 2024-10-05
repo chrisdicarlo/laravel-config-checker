@@ -34,3 +34,35 @@ it('disables the progress bar when the --no-progress option is used', function (
         ->expectsOutputToContain('No issues found. All config references are valid.')
         ->assertExitCode(0);
 });
+
+it('skips checking blade files when the --no-blade option is used', function () {
+    $this->app->setBasePath(realpath(__DIR__.'/fixtures/valid'));
+
+    artisan('config:check', ['--no-blade' => true])
+        ->expectsOutputToContain('Checking PHP files...')
+        ->doesntExpectOutputToContain('Checking Blade files...')
+        ->expectsOutputToContain('No issues found. All config references are valid.')
+        ->assertExitCode(0);
+
+    artisan('config:check', ['--no-blade' => true, '--no-progress' => true])
+        ->expectsOutputToContain('Checking PHP files...')
+        ->doesntExpectOutputToContain('Checking Blade files...')
+        ->expectsOutputToContain('No issues found. All config references are valid.')
+        ->assertExitCode(0);
+});
+
+it('skips checking php files when the --no-php option is used', function () {
+    $this->app->setBasePath(realpath(__DIR__.'/fixtures/valid'));
+
+    artisan('config:check', ['--no-php' => true])
+        ->expectsOutputToContain('Checking Blade files...')
+        ->doesntExpectOutputToContain('Checking PHP files...')
+        ->expectsOutputToContain('No issues found. All config references are valid.')
+        ->assertExitCode(0);
+
+    artisan('config:check', ['--no-php' => true, '--no-progress' => true])
+        ->expectsOutputToContain('Checking Blade files...')
+        ->doesntExpectOutputToContain('Checking PHP files...')
+        ->expectsOutputToContain('No issues found. All config references are valid.')
+        ->assertExitCode(0);
+});
