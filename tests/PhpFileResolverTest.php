@@ -1,11 +1,11 @@
 <?php
 
-use ChrisDiCarlo\LaravelConfigChecker\Support\PhpFiles;
+use ChrisDiCarlo\LaravelConfigChecker\Resolvers\PhpFileResolver;
 
 it('selects the correct files and directories to check', function () {
-    $files = new PhpFiles(realpath(__DIR__.'/fixtures/base'));
+    $files = new PhpFileResolver(realpath(__DIR__.'/fixtures/base'));
 
-    $finder = $files();
+    $finder = $files->resolve();
 
     $filePaths = [];
     foreach ($finder as $file) {

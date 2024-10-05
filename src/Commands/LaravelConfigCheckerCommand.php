@@ -2,10 +2,10 @@
 
 namespace ChrisDiCarlo\LaravelConfigChecker\Commands;
 
-use ChrisDiCarlo\LaravelConfigChecker\Support\BladeFiles;
+use ChrisDiCarlo\LaravelConfigChecker\Resolvers\BladeFileResolver;
+use ChrisDiCarlo\LaravelConfigChecker\Resolvers\PhpFileResolver;
 use ChrisDiCarlo\LaravelConfigChecker\Support\FileChecker;
 use ChrisDiCarlo\LaravelConfigChecker\Support\LoadConfigKeys;
-use ChrisDiCarlo\LaravelConfigChecker\Support\PhpFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
@@ -37,15 +37,16 @@ class LaravelConfigCheckerCommand extends Command
 
     public function handle(
         LoadConfigKeys $loadConfigKeys,
-        PhpFiles $phpFiles,
-        BladeFiles $bladeFiles
+        PhpFileResolver $phpFiles,
+        BladeFileResolver $bladeFiles
     ): int {
         $this->configKeys = $loadConfigKeys();
 
         if ($this->option('no-progress')) {
             intro('--no-progress option used. Disabling progress bar.');
+
             info('Checking PHP files...');
-            $phpFiles = $phpFiles();
+            $phpFiles = $phpFiles->resolve();
 
             foreach ($phpFiles as $file) {
                 $content = file_get_contents($file->getRealPath());
@@ -58,7 +59,7 @@ class LaravelConfigCheckerCommand extends Command
             }
 
             info('Checking Blade files...');
-            $bladeFiles = $bladeFiles();
+            $bladeFiles = $bladeFiles->resolve();
             foreach ($bladeFiles as $file) {
                 $content = file_get_contents($file->getRealPath());
                 $fileChecker = new FileChecker($this->configKeys, $content);
@@ -67,10 +68,12 @@ class LaravelConfigCheckerCommand extends Command
                     $this->bladeIssues[$file->getRelativePathname()][] = $issue;
                 }
             }
+
         } else {
+
             $progress = progress(
                 label: 'Checking PHP files...',
-                steps: $phpFiles(),
+                steps: $phpFiles->resolve(),
                 callback: function ($file, $progress) {
                     $progress->hint = "Checking {$file->getRelativePathname()}";
 
@@ -86,7 +89,7 @@ class LaravelConfigCheckerCommand extends Command
 
             $progress = progress(
                 label: 'Checking Blade files...',
-                steps: $bladeFiles(),
+                steps: $bladeFiles->resolve(),
                 callback: function ($file, $progress) {
                     $progress->hint = "Checking {$file->getRelativePathname()}";
 
