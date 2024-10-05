@@ -11,12 +11,6 @@ abstract class AbstractFileResolver implements FileResolverContract
 
     private ?Finder $finder = null;
 
-    abstract public function excludePaths(): array;
-
-    abstract public function includePaths(): array;
-
-    abstract public function names(): array;
-
     public function __construct(?string $basePath = null)
     {
         if (! $basePath) {
@@ -25,6 +19,12 @@ abstract class AbstractFileResolver implements FileResolverContract
 
         $this->basePath = $basePath;
     }
+
+    abstract public function excludePaths(): array;
+
+    abstract public function includePaths(): array;
+
+    abstract public function names(): array;
 
     public function resolve(): iterable
     {

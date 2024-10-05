@@ -57,7 +57,7 @@ class LoadConfigKeys
             $folder = pathinfo($relativePath, PATHINFO_DIRNAME);
 
             if ($folder !== '.') {
-                $key = str_replace('/', '.', $folder).'.'.$key;
+                $key = str_replace('/', '.', $folder) . '.' . $key;
             }
 
             $this->configKeys[] = $key;

@@ -24,7 +24,7 @@ beforeEach(function () {
 });
 
 it('loads config keys from the config directory', function () {
-    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__.'/fixtures/base/config'));
+    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__ . '/fixtures/base/config'));
 
     $configKeys = $loadConfigKeys();
 
@@ -42,7 +42,7 @@ it('loads config keys from the default config directory', function () {
 });
 
 it('loads config keys from the config directory with nested subfolders', function () {
-    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__.'/fixtures/subfolders/config'));
+    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__ . '/fixtures/subfolders/config'));
 
     $configKeys = $loadConfigKeys();
 
@@ -52,7 +52,7 @@ it('loads config keys from the config directory with nested subfolders', functio
 });
 
 it('returns a collection of config keys', function () {
-    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__.'/fixtures/base/config'));
+    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__ . '/fixtures/base/config'));
 
     $configKeys = $loadConfigKeys();
 
@@ -60,7 +60,7 @@ it('returns a collection of config keys', function () {
 });
 
 it('converts an array of config keys to dotted notation', function () {
-    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__.'/fixtures/base/config'));
+    $loadConfigKeys = new LoadConfigKeys(realpath(__DIR__ . '/fixtures/base/config'));
 
     $configKeys = [
         'app',
