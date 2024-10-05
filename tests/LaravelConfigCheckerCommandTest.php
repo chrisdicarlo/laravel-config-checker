@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use function Pest\Laravel\artisan;
 
 it('displays a message when there are no issues', function () {
     // set the base path for the application
-    $this->app->setBasePath(realpath(__DIR__.'/fixtures/valid'));
+    $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
 
     artisan('config:check')
         ->expectsOutputToContain('No issues found. All config references are valid.')
@@ -13,19 +15,19 @@ it('displays a message when there are no issues', function () {
 
 it('displays a message when there are issues', function () {
     // set the base path for the application
-    $this->app->setBasePath(realpath(__DIR__.'/fixtures/invalid'));
+    $this->app->setBasePath(realpath(__DIR__ . '/fixtures/invalid'));
 
     artisan('config:check')
         ->expectsOutputToContain('Invalid config references found:')
-        ->expectsOutputToContain('app'.DIRECTORY_SEPARATOR.'TestClassOne.php')
-        ->expectsOutputToContain('app'.DIRECTORY_SEPARATOR.'TestClassTwo.php')
-        ->expectsOutputToContain('resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'test-view-one.blade.php')
-        ->expectsOutputToContain('resources'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'test-view-two.blade.php')
+        ->expectsOutputToContain('app' . DIRECTORY_SEPARATOR . 'TestClassOne.php')
+        ->expectsOutputToContain('app' . DIRECTORY_SEPARATOR . 'TestClassTwo.php')
+        ->expectsOutputToContain('resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'test-view-one.blade.php')
+        ->expectsOutputToContain('resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'test-view-two.blade.php')
         ->assertExitCode(1);
 });
 
 it('disables the progress bar when the --no-progress option is used', function () {
-    $this->app->setBasePath(realpath(__DIR__.'/fixtures/valid'));
+    $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
 
     artisan('config:check', ['--no-progress' => true])
         ->expectsOutputToContain('--no-progress option used. Disabling progress bar.')
@@ -36,7 +38,7 @@ it('disables the progress bar when the --no-progress option is used', function (
 });
 
 it('skips checking blade files when the --no-blade option is used', function () {
-    $this->app->setBasePath(realpath(__DIR__.'/fixtures/valid'));
+    $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
 
     artisan('config:check', ['--no-blade' => true])
         ->expectsOutputToContain('Checking PHP files...')
@@ -52,7 +54,7 @@ it('skips checking blade files when the --no-blade option is used', function () 
 });
 
 it('skips checking php files when the --no-php option is used', function () {
-    $this->app->setBasePath(realpath(__DIR__.'/fixtures/valid'));
+    $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
 
     artisan('config:check', ['--no-php' => true])
         ->expectsOutputToContain('Checking Blade files...')

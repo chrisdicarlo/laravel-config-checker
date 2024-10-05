@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker;
 
 use ChrisDiCarlo\LaravelConfigChecker\Commands\LaravelConfigCheckerCommand;

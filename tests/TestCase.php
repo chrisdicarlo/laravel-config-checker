@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker\Tests;
 
 use ChrisDiCarlo\LaravelConfigChecker\LaravelConfigCheckerServiceProvider;
@@ -13,15 +15,8 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'ChrisDiCarlo\\LaravelConfigChecker\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'ChrisDiCarlo\\LaravelConfigChecker\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
-    }
-
-    protected function getPackageProviders($app)
-    {
-        return [
-            LaravelConfigCheckerServiceProvider::class,
-        ];
     }
 
     public function getEnvironmentSetUp($app)
@@ -32,5 +27,12 @@ class TestCase extends Orchestra
         $migration = include __DIR__.'/../database/migrations/create_laravel-config-checker_table.php.stub';
         $migration->up();
         */
+    }
+
+    protected function getPackageProviders($app)
+    {
+        return [
+            LaravelConfigCheckerServiceProvider::class,
+        ];
     }
 }

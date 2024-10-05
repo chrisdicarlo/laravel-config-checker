@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker\Support;
 
 use Illuminate\Support\Collection;
@@ -57,7 +59,7 @@ class LoadConfigKeys
             $folder = pathinfo($relativePath, PATHINFO_DIRNAME);
 
             if ($folder !== '.') {
-                $key = str_replace('/', '.', $folder).'.'.$key;
+                $key = str_replace('/', '.', $folder) . '.' . $key;
             }
 
             $this->configKeys[] = $key;

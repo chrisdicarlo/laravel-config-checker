@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker\Commands;
 
 use ChrisDiCarlo\LaravelConfigChecker\Resolvers\BladeFileResolver;

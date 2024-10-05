@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker\Resolvers;
 
 class BladeFileResolver extends AbstractFileResolver
