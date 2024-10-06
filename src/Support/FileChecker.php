@@ -60,7 +60,7 @@ class FileChecker
     {
         $matches = [];
 
-        preg_match_all('/config\([\'"]([^\'"]+)[\'"]\)/', $content, $matches, PREG_OFFSET_CAPTURE);
+        preg_match_all('/[^:>]config\([\'"]([^\'"]+)[\'"]\)/', $content, $matches, PREG_OFFSET_CAPTURE);
 
         $issues = [];
 
