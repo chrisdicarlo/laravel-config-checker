@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace ChrisDiCarlo\LaravelConfigChecker\Support;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 
 class FileChecker
 {
     public function __construct(
-        private readonly Collection $configKeys,
         private readonly string $content,
     ) {}
 
@@ -46,7 +46,7 @@ class FileChecker
             $offset = (int) $match[1];
             $lineNumber = substr_count(substr($content, 0, $offset), "\n") + 1;
 
-            if ($this->configKeys->doesntContain($key)) {
+            if (! Config::has($key)) {
                 $issues[] = [
                     'key' => $key,
                     'type' => sprintf('Config::%s()', $matches[1][$index][0]),
@@ -71,7 +71,7 @@ class FileChecker
             $offset = (int) $match[1];
             $lineNumber = substr_count(substr($content, 0, $offset), "\n") + 1;
 
-            if ($this->configKeys->doesntContain($key)) {
+            if (! Config::has($key)) {
                 $issues[] = [
                     'key' => $key,
                     'type' => 'config()',
