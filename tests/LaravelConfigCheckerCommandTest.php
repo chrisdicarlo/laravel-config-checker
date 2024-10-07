@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Config;
+
 use function Pest\Laravel\artisan;
 
 it('displays a message when there are no issues', function () {
-    // set the base path for the application
     $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
+    Config::set('app.valid_key', 'Laravel Config Checker');
+    Config::set('app.nested', [
+        'key' => 'value',
+    ]);
 
     artisan('config:check')
         ->expectsOutputToContain('No issues found. All config references are valid.')
@@ -14,8 +19,12 @@ it('displays a message when there are no issues', function () {
 });
 
 it('displays a message when there are issues', function () {
-    // set the base path for the application
     $this->app->setBasePath(realpath(__DIR__ . '/fixtures/invalid'));
+
+    Config::set('app.valid_key', 'Laravel Config Checker');
+    Config::set('app.nested', [
+        'key' => 'value',
+    ]);
 
     artisan('config:check')
         ->expectsOutputToContain('Invalid config references found:')
@@ -29,6 +38,11 @@ it('displays a message when there are issues', function () {
 it('disables the progress bar when the --no-progress option is used', function () {
     $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
 
+    Config::set('app.valid_key', 'Laravel Config Checker');
+    Config::set('app.nested', [
+        'key' => 'value',
+    ]);
+
     artisan('config:check', ['--no-progress' => true])
         ->expectsOutputToContain('--no-progress option used. Disabling progress bar.')
         ->expectsOutputToContain('Checking PHP files...')
@@ -39,6 +53,11 @@ it('disables the progress bar when the --no-progress option is used', function (
 
 it('skips checking blade files when the --no-blade option is used', function () {
     $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
+
+    Config::set('app.valid_key', 'Laravel Config Checker');
+    Config::set('app.nested', [
+        'key' => 'value',
+    ]);
 
     artisan('config:check', ['--no-blade' => true])
         ->expectsOutputToContain('Checking PHP files...')
@@ -55,6 +74,11 @@ it('skips checking blade files when the --no-blade option is used', function () 
 
 it('skips checking php files when the --no-php option is used', function () {
     $this->app->setBasePath(realpath(__DIR__ . '/fixtures/valid'));
+
+    Config::set('app.valid_key', 'Laravel Config Checker');
+    Config::set('app.nested', [
+        'key' => 'value',
+    ]);
 
     artisan('config:check', ['--no-php' => true])
         ->expectsOutputToContain('Checking Blade files...')

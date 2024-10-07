@@ -7,7 +7,6 @@ namespace ChrisDiCarlo\LaravelConfigChecker\Commands;
 use ChrisDiCarlo\LaravelConfigChecker\Resolvers\BladeFileResolver;
 use ChrisDiCarlo\LaravelConfigChecker\Resolvers\PhpFileResolver;
 use ChrisDiCarlo\LaravelConfigChecker\Support\FileChecker;
-use ChrisDiCarlo\LaravelConfigChecker\Support\LoadConfigKeys;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
@@ -26,8 +25,6 @@ class LaravelConfigCheckerCommand extends Command
 
     public $description = 'Check all references to config values in PHP and Blade files';
 
-    private Collection $configKeys;
-
     private array $bladeIssues = [];
 
     private array $phpIssues = [];
@@ -41,12 +38,9 @@ class LaravelConfigCheckerCommand extends Command
     }
 
     public function handle(
-        LoadConfigKeys $loadConfigKeys,
         PhpFileResolver $phpFiles,
         BladeFileResolver $bladeFiles
     ): int {
-        $this->configKeys = $loadConfigKeys();
-
         if ($this->option('no-progress')) {
             intro('--no-progress option used. Disabling progress bar.');
 
@@ -57,7 +51,7 @@ class LaravelConfigCheckerCommand extends Command
                 foreach ($phpFiles as $file) {
                     $content = file_get_contents($file->getRealPath());
 
-                    $fileChecker = new FileChecker($this->configKeys, $content);
+                    $fileChecker = new FileChecker($content);
 
                     foreach ($fileChecker->check() as $issue) {
                         $this->phpIssues[$file->getRelativePathname()][] = $issue;
@@ -70,7 +64,7 @@ class LaravelConfigCheckerCommand extends Command
                 $bladeFiles = $bladeFiles->resolve();
                 foreach ($bladeFiles as $file) {
                     $content = file_get_contents($file->getRealPath());
-                    $fileChecker = new FileChecker($this->configKeys, $content);
+                    $fileChecker = new FileChecker($content);
 
                     foreach ($fileChecker->check() as $issue) {
                         $this->bladeIssues[$file->getRelativePathname()][] = $issue;
@@ -87,7 +81,7 @@ class LaravelConfigCheckerCommand extends Command
 
                         $content = file_get_contents($file->getRealPath());
 
-                        $fileChecker = new FileChecker($this->configKeys, $content);
+                        $fileChecker = new FileChecker($content);
 
                         foreach ($fileChecker->check() as $issue) {
                             $this->phpIssues[$file->getRelativePathname()][] = $issue;
@@ -104,7 +98,7 @@ class LaravelConfigCheckerCommand extends Command
                         $progress->hint = "Checking {$file->getRelativePathname()}";
 
                         $content = file_get_contents($file->getRealPath());
-                        $fileChecker = new FileChecker($this->configKeys, $content);
+                        $fileChecker = new FileChecker($content);
 
                         foreach ($fileChecker->check() as $issue) {
                             $this->bladeIssues[$file->getRelativePathname()][] = $issue;

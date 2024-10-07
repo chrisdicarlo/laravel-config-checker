@@ -5,13 +5,14 @@ declare(strict_types=1);
 use ChrisDiCarlo\LaravelConfigChecker\Support\FileChecker;
 use ChrisDiCarlo\LaravelConfigChecker\Support\FileCheckInfo;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 
 beforeEach(function () {
-    $this->configKeys = collect([
-        'file',
-        'file.valid_key',
-        'file.nested',
-        'file.nested.key',
+    Config::set('file', [
+        'valid_key' => 'value',
+        'nested' => [
+            'key' => 'value',
+        ],
     ]);
 });
 it('returns a collection of FileCheckInfo objects', function () {
@@ -20,7 +21,7 @@ it('returns a collection of FileCheckInfo objects', function () {
             Config::get("invalid_key");
         PHP;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -34,7 +35,7 @@ it('handles content with no facade or helper usage gracefully', function () {
         echo "Hello, World!";
     PHP;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -44,7 +45,7 @@ it('handles content with no facade or helper usage gracefully', function () {
             {{ "Hello, World!" }}
         BLADE;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -59,7 +60,7 @@ it('handles content without any issues gracefully', function () {
             config("file.valid_key");
         PHP;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -71,7 +72,7 @@ it('handles content without any issues gracefully', function () {
             {{ config("file.valid_key") }}
         BLADE;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -89,7 +90,7 @@ it('detects facade and helper usage issues correctly', function () {
             config("file.valid_key");
         PHP;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -117,7 +118,7 @@ it('detects facade and helper usage issues correctly', function () {
             {{ config("file.valid_key") }}
         BLADE;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -140,7 +141,7 @@ it('detects facade and helper usage issues correctly', function () {
 it('handles empty content gracefully', function () {
     $content = '';
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
@@ -158,12 +159,34 @@ it('detects issues when there are both valid and invalid references', function (
             config("file.valid_key");
         PHP;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
-    expect($issues->contains('key', 'file.valid_key'))->toBeFalse();
-    expect($issues->contains('key', 'file.invalid_key'))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.invalid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.invalid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.invalid_key' &&
+            $issue->type === 'config()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'config()';
+    }))->toBeFalse();
 
     $content = <<<'BLADE'
             {{ Config::get("file.invalid_key") }}
@@ -174,12 +197,34 @@ it('detects issues when there are both valid and invalid references', function (
             {{ config("file.valid_key") }}
         BLADE;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
-    expect($issues->contains('key', 'file.valid_key'))->toBeFalse();
-    expect($issues->contains('key', 'file.invalid_key'))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.invalid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.invalid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.invalid_key' &&
+            $issue->type === 'config()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'config()';
+    }))->toBeFalse();
 });
 
 it('detects issues for invalid nested keys', function () {
@@ -193,12 +238,34 @@ it('detects issues for invalid nested keys', function () {
             config("file.valid_key");
         PHP;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
-    expect($issues->contains('key', 'file.valid_key'))->toBeFalse();
-    expect($issues->contains('key', 'file.nested.invalid_key'))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.nested.invalid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.nested.invalid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.nested.invalid_key' &&
+            $issue->type === 'config()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'config()';
+    }))->toBeFalse();
 
     $content = <<<'BLADE'
             {{ Config::get("file.nested.invalid_key") }}
@@ -209,12 +276,34 @@ it('detects issues for invalid nested keys', function () {
             {{ config("file.valid_key") }}
         BLADE;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
-    expect($issues->contains('key', 'file.valid_key'))->toBeFalse();
-    expect($issues->contains('key', 'file.nested.invalid_key'))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.nested.invalid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.nested.invalid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.nested.invalid_key' &&
+            $issue->type === 'config()';
+    }))->toBeTrue();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::get()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'Config::has()';
+    }))->toBeFalse();
+    expect($issues->contains(function ($issue) {
+        return $issue->key === 'file.valid_key' &&
+            $issue->type === 'config()';
+    }))->toBeFalse();
 });
 
 it('ignores methods called config', function () {
@@ -227,7 +316,7 @@ it('ignores methods called config', function () {
             Config::get('some.other.invalid.key');
         PHP;
 
-    $fileChecker = new FileChecker($this->configKeys, $content);
+    $fileChecker = new FileChecker($content);
 
     $issues = $fileChecker->check();
 
