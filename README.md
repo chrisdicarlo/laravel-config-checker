@@ -27,7 +27,7 @@ From the command-line, simply run:
 php artisan config:check
 ```
 
-The command will scan your Php code under `app` and your Blade views under `resources/views`.  Any errors will be displayed in a table with information on the location and missing reference:
+The command will scan your Php code under `app`, `database`, `routes`, `bootstrap` and your Blade views under `resources/views`.  Any errors will be displayed in a table with information on the location and missing reference:
 
 ![Sample Output](output-sample.png)
 
