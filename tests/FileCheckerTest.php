@@ -214,3 +214,25 @@ it('detects issues for invalid nested keys', function () {
     expect($issues->contains('key', 'file.valid_key'))->toBeFalse();
     expect($issues->contains('key', 'file.nested.invalid_key'))->toBeTrue();
 });
+
+it('ignores methods called config', function () {
+    $content = <<<'PHP'
+        <?php
+            $this->config("some-invalid-key");
+            SomeClass::config("another.invalid-key");
+            config('some.random.key');
+            Config::has('some.invalid.key');
+            Config::get('some.other.invalid.key');
+        PHP;
+
+    $fileChecker = new FileChecker($this->configKeys, $content);
+
+    $issues = $fileChecker->check();
+
+    expect($issues->count())->toBe(3);
+    expect($issues->contains('key', 'some.random.key'))->toBeTrue();
+    expect($issues->contains('key', 'some.invalid.key'))->toBeTrue();
+    expect($issues->contains('key', 'some.other.invalid.key'))->toBeTrue();
+    expect($issues->contains('key', 'some-invalid-key'))->toBeFalse();
+    expect($issues->contains('key', 'another.invalid-key'))->toBeFalse();
+});
