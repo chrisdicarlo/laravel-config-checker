@@ -31,6 +31,21 @@ The command will scan your Php code under `app` and your Blade views under `reso
 
 ![Sample Output](output-sample.png)
 
+### Disabling progress
+
+To disable progress bars (e.g. in CI), pass the `--no-progress` flag when running the command:
+```bash
+php artisan config:check --no-progress
+```
+
+### Specifying the file type to check
+
+To skip checking of Php or Blade files, pass `--no-php` or `--no-blade` respectively:
+```bash
+php artisan config:check --no-php
+php artisan config:check --no-blade
+```
+
 ## Testing
 
 ```bash
