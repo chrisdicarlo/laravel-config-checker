@@ -2,6 +2,11 @@
 
 All notable changes to `laravel-config-checker` will be documented in this file.
 
+## v1.3.0 - 2025-11-23
+
+* Add Laravel 12 support (Thanks @makowskid!)
+* Consolidate CI tests into single GitHub action
+
 ## v1.2.0 - 2024-10-07
 
 ### What's Changed
