@@ -8,16 +8,16 @@ class BladeFileResolver extends AbstractFileResolver
 {
     public function excludePaths(): array
     {
-        return ['vendor'];
+        return config('config-checker.blade.exclude_paths');
     }
 
     public function includePaths(): array
     {
-        return ['resources/views'];
+        return config('config-checker.blade.include_paths');
     }
 
     public function names(): array
     {
-        return ['*.blade.php'];
+        return config('config-checker.blade.names');
     }
 }

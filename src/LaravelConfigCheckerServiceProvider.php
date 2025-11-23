@@ -14,6 +14,8 @@ class LaravelConfigCheckerServiceProvider extends PackageServiceProvider
     {
         $package->name('laravel-config-checker');
 
+        $package->hasConfigFile();
+
         if ($this->app->runningInConsole()) {
             $package->hasCommand(LaravelConfigCheckerCommand::class);
         }

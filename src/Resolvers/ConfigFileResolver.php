@@ -8,16 +8,16 @@ class ConfigFileResolver extends AbstractFileResolver
 {
     public function excludePaths(): array
     {
-        return ['vendor'];
+        return config('config-checker.config.exclude_paths');
     }
 
     public function includePaths(): array
     {
-        return ['config'];
+        return config('config-checker.config.include_paths');
     }
 
     public function names(): array
     {
-        return ['*.php'];
+        return config('config-checker.config.names');
     }
 }
