@@ -18,6 +18,6 @@ class ConfigFileResolver extends AbstractFileResolver
 
     public function names(): array
     {
-        return config('config-checker.config.names');
+        return ['*.php'];
     }
 }

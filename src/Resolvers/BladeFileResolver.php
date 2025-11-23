@@ -18,6 +18,6 @@ class BladeFileResolver extends AbstractFileResolver
 
     public function names(): array
     {
-        return config('config-checker.blade.names');
+        return ['*.blade.php'];
     }
 }
