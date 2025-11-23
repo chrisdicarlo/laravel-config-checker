@@ -20,4 +20,9 @@ class PhpFileResolver extends AbstractFileResolver
     {
         return ['*.php'];
     }
+
+    public function excludeNames(): array
+    {
+        return ['*.blade.php'];
+    }
 }

@@ -20,4 +20,9 @@ class ConfigFileResolver extends AbstractFileResolver
     {
         return ['*.php'];
     }
+
+    public function excludeNames(): array
+    {
+        return ['*.blade.php'];
+    }
 }
