@@ -13,4 +13,6 @@ interface FileResolverContract
     public function names(): array;
 
     public function resolve(): iterable;
+
+    public function excludeNames(): array;
 }

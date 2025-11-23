@@ -11,10 +11,6 @@ return [
         'exclude_paths' => [
             'vendor',
         ],
-
-        'names' => [
-            '*.blade.php',
-        ],
     ],
 
     'config' => [
@@ -24,10 +20,6 @@ return [
 
         'exclude_paths' => [
             'vendor',
-        ],
-
-        'names' => [
-            '*.php',
         ],
     ],
 
@@ -42,10 +34,6 @@ return [
         'exclude_paths' => [
             'config',
             'vendor',
-        ],
-
-        'names' => [
-            '*.php',
         ],
     ],
 ];

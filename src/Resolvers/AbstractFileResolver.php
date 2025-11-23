@@ -28,6 +28,11 @@ abstract class AbstractFileResolver implements FileResolverContract
 
     abstract public function names(): array;
 
+    public function excludeNames(): array
+    {
+        return [];
+    }
+
     public function resolve(): iterable
     {
         if (! $this->finder) {
@@ -53,6 +58,10 @@ abstract class AbstractFileResolver implements FileResolverContract
 
         foreach ($this->names() as $name) {
             $finder->name($name);
+        }
+
+        foreach ($this->excludeNames() as $excludeName) {
+            $finder->notName($excludeName);
         }
 
         return $finder;
