@@ -2,6 +2,13 @@
 
 All notable changes to `laravel-config-checker` will be documented in this file.
 
+## v1.3.1 - 2025-11-23
+
+Bump Github Action dependencies.
+
+* stefanzweifel/git-auto-commit-action from 5 to 7
+* actions/checkout from 4 to 5
+
 ## v1.3.0 - 2025-11-23
 
 * Add Laravel 12 support (Thanks @makowskid!)
