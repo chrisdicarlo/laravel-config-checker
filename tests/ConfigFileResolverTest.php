@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ChrisDiCarlo\LaravelConfigChecker\Resolvers\ConfigFileResolver;
 
 it('selects the correct files and directories to check', function () {

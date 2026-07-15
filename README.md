@@ -20,6 +20,11 @@ You can install the package via composer:
 composer require chrisdicarlo/laravel-config-checker
 ```
 
+After installing the package, you can publish the configuration file:
+
+```bash
+php artisan vendor:publish --tag="config-checker-config"
+```
 
 ## Usage
 From the command-line, simply run:
@@ -27,9 +32,30 @@ From the command-line, simply run:
 php artisan config:check
 ```
 
-The command will scan your Php code under `app` and your Blade views under `resources/views`.  Any errors will be displayed in a table with information on the location and missing reference:
+The command will scan your Php code under `app`, `database`, `routes`, `bootstrap` and your Blade views under `resources/views`.  
+Any errors will be displayed in a table with information on the location and missing reference:
 
 ![Sample Output](output-sample.png)
+
+### Customizing paths
+
+If you want the command to scan PHP/Blade code under custom paths, you can add or update entries in
+`config/config-checker.php`.
+
+### Disabling progress
+
+To disable progress bars (e.g. in CI), pass the `--no-progress` flag when running the command:
+```bash
+php artisan config:check --no-progress
+```
+
+### Specifying the file type to check
+
+To skip checking of Php or Blade files, pass `--no-php` or `--no-blade` respectively:
+```bash
+php artisan config:check --no-php
+php artisan config:check --no-blade
+```
 
 ## Testing
 

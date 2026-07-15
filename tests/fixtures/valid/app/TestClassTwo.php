@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker\Tests\fixtures\app;
 
 use Illuminate\Support\Facades\Config;

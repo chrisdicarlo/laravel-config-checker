@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use ChrisDiCarlo\LaravelConfigChecker\Support\LoadConfigKeys;
 use Illuminate\Support\Collection;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker\Tests;
 
 use ChrisDiCarlo\LaravelConfigChecker\LaravelConfigCheckerServiceProvider;
@@ -8,6 +10,8 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
+    public static $latestResponse;
+
     protected function setUp(): void
     {
         parent::setUp();

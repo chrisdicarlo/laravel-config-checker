@@ -2,6 +2,46 @@
 
 All notable changes to `laravel-config-checker` will be documented in this file.
 
+## v1.4.0 - 2025-11-23
+
+### What's Changed
+
+* feat: add configuration file by @eleftrik in https://github.com/chrisdicarlo/laravel-config-checker/pull/14
+* Fix potential bug if Blade and PHP files are colocated by @chrisdicarlo in https://github.com/chrisdicarlo/laravel-config-checker/pull/24
+
+### New Contributors
+
+* @eleftrik made their first contribution in https://github.com/chrisdicarlo/laravel-config-checker/pull/14
+
+**Full Changelog**: https://github.com/chrisdicarlo/laravel-config-checker/compare/v1.3.1...v1.4.0
+
+## v1.3.1 - 2025-11-23
+
+Bump Github Action dependencies.
+
+* stefanzweifel/git-auto-commit-action from 5 to 7
+* actions/checkout from 4 to 5
+
+## v1.3.0 - 2025-11-23
+
+* Add Laravel 12 support (Thanks @makowskid!)
+* Consolidate CI tests into single GitHub action
+
+## v1.2.0 - 2024-10-07
+
+### What's Changed
+
+* Add option to disable progress bars by @chrisdicarlo in https://github.com/chrisdicarlo/laravel-config-checker/pull/7
+* Add file resolvers by @chrisdicarlo in https://github.com/chrisdicarlo/laravel-config-checker/pull/8
+* Add options to specify filetypes to check by @chrisdicarlo in https://github.com/chrisdicarlo/laravel-config-checker/pull/9
+* Don't check internal methods called config by @moshe-autoleadstar in https://github.com/chrisdicarlo/laravel-config-checker/pull/10
+
+### New Contributors
+
+* @moshe-autoleadstar made their first contribution in https://github.com/chrisdicarlo/laravel-config-checker/pull/10
+
+**Full Changelog**: https://github.com/chrisdicarlo/laravel-config-checker/compare/v1.1.0...v1.2.0
+
 ## v1.1.0 - 2024-10-04
 
 Ensure config settings in nested config folders are correctly resolved.

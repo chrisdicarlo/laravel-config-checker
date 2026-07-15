@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ChrisDiCarlo\LaravelConfigChecker\Contracts;
 
 interface FileResolverContract
@@ -11,4 +13,6 @@ interface FileResolverContract
     public function names(): array;
 
     public function resolve(): iterable;
+
+    public function excludeNames(): array;
 }
